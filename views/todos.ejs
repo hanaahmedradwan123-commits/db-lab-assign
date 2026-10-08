@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Application</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .todo-item { display: flex; align-items: center; margin-bottom: 10px; gap: 10px; }
+        .todo-title { flex-grow: 1; padding: 6px; }
+        .done { text-decoration: line-through; color: #888; }
+        .error { color: red; margin-bottom: 10px; }
+        .add-form { display: flex; gap: 10px; margin-bottom: 20px; }
+        .add-form input { flex-grow: 1; padding: 8px; }
+        button { padding: 6px 12px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>To-Do</h2>
+        <div>
+            Hi, <%= userName %> 
+            <form action="/logout" method="POST" style="display:inline;">
+                <button type="submit">Log out</button>
+            </form>
+        </div>
+    </div>
+
+    <% if (errors && errors.length > 0) { %>
+        <div class="error">
+            <% errors.forEach(error => { %>
+                <p><%= error %></p>
+            <% }) %>
+        </div>
+    <% } %>
+
+    <form action="/todos/add" method="POST" class="add-form" id="addForm">
+        <input type="text" name="title" id="todoTitle" placeholder="What needs to be done?">
+        <button type="submit">Add</button>
+    </form>
+
+    <% if (!todos || todos.length === 0) { %>
+        <p>No tasks found. Add your first to-do item above!</p>
+    <% } else { %>
+        <% todos.forEach(todo => { %>
+            <div class="todo-item">
+                <form action="/todos/toggle" method="POST" style="display:inline;">
+                    <input type="hidden" name="todo_id" value="<%= todo.todo_id %>">
+                    <input type="hidden" name="is_done" value="<%= todo.is_done %>">
+                    <input type="checkbox" onChange="this.form.submit()" <%= todo.is_done ? 'checked' : '' %>>
+                </form>
+
+                <form action="/todos/edit" method="POST" style="display:flex; flex-grow:1; gap:5px;">
+                    <input type="hidden" name="todo_id" value="<%= todo.todo_id %>">
+                    <input type="text" name="title" value="<%= todo.title %>" class="todo-title <%= todo.is_done ? 'done' : '' %>">
+                    <button type="submit">Save</button>
+                </form>
+
+                <form action="/todos/delete" method="POST" onsubmit="return confirm('Are you sure?');">
+                    <input type="hidden" name="todo_id" value="<%= todo.todo_id %>">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        <% }) %>
+    <% } %>
+
+    <script>
+        document.getElementById('addForm').addEventListener('submit', function(e) {
+            const title = document.getElementById('todoTitle').value.trim();
+            if (!title) { alert('Title is required'); e.preventDefault(); return; }
+            if (title.length > 200) { alert('Title is too long'); e.preventDefault(); return; }
+        });
+    </script>
+</body>
+</html>
