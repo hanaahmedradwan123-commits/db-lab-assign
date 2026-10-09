@@ -3,26 +3,26 @@
 ## Team Information
 - **Student Name**: Hana Ahmed Shehata
 - **Student ID**: 2304081
-- **Contribution**: Implemented MySQL database schema, Express backend, session handling, bcrypt authentication, parameterised SQL queries, and EJS frontend views.
+- **Contribution**: Developed database schema, Express backend, session authentication, bcrypt security, parameterised SQL queries, responsive UI layout, and dark/light mode toggle.
 
 ---
 
 ## Technologies Used
 - **Backend**: Node.js, Express.js
-- **Database**: MySQL
-- **Frontend**: EJS Templating, CSS
-- **Authentication & Security**: `bcrypt` (password hashing), `express-session` (cookie sessions), Parameterised SQL queries (SQL injection prevention)
+- **Database**: MySQL (`mysql2/promise`)
+- **Frontend**: EJS Templating, Custom CSS (CSS Variables & Responsive Flexbox Layout)
+- **Authentication & Security**: `bcrypt` (salted password hashing), `express-session` (cookie-based session management), Parameterised SQL queries (SQL injection prevention)
 
 ---
 
 ## How to Run
 
 1. **Database Setup**:
-   Import and run `database/schema.sql` inside MySQL Workbench:
+   Import and run `database/schema.sql` inside MySQL Workbench or MySQL CLI:
    ```sql
    SOURCE database/schema.sql;
-   Environment Configuration:
-Copy .env.example to .env and fill in your MySQL credentials:
+Environment Configuration:
+Copy .env.example to .env and fill in your local MySQL credentials:
 
 Code snippet
 PORT=3000
@@ -31,7 +31,7 @@ DB_USER=root
 DB_PASS=your_password
 DB_NAME=registration
 SESSION_SECRET=super_secret_key
-Install Dependencies & Start:
+Install Dependencies & Start Server:
 
 Bash
 npm install
@@ -39,42 +39,27 @@ node app.js
 Open http://localhost:3000 in your browser.
 
 Features Implemented
-R1 & R2: Registration & Login with validation and unified error messages.
+R1 & R2: Registration & Login with complete form validation and unified error messaging (Invalid email or password, Email Already Exists).
 
-R3: Session protection for private routes.
+R3: Route protection via session checking (unauthenticated visitors are automatically redirected to /login).
 
-R4 - R7: Full To-Do CRUD (Add, Edit, Toggle Done/Undone, Delete with confirmation).
+R4 – R7: Full To-Do CRUD operations (Add, Inline Title Edit, Toggle Completed Status, Delete with confirmation prompt).
 
-R8: Client-side and server-side validation.
+R8: Dual validation in browser (JavaScript) and server side (Express) with exact required error strings.
 
-R9: Bcrypt password hashing & parameterized SQL queries.
+R9: Secure bcrypt password hashing, strict parameterised queries (? placeholders), and session-bound user_id authorization.
 
-R10: Responsive UI for desktop and 360px mobile views.
+R10 & Bonus: Card-based UI design with consistent styling across all pages, dark/light theme toggle saved in localStorage, and responsiveness down to 360px mobile views.
 
-Questions & Answers
+Deliverable Questions & Answers
 (a) Why do UPDATE and DELETE contain AND user_id = ? and what changes if you remove it?
-Adding AND user_id = ? ensures row-level authorization. Without it, any authenticated user could modify or delete tasks owned by another user by altering the todo_id parameter in the request payload.
+Adding AND user_id = ? enforces database-level authorization. It guarantees that users can only modify or delete tasks associated with their active session. If AND user_id = ? is removed, any user could modify or delete another user's tasks simply by altering the todo_id parameter sent in the request payload.
 
 (b) What happens if you insert a to-do for a user_id that does not exist, and which constraint of the lecture is that?
-MySQL rejects the query with a foreign key violation error. This enforces the Referential Integrity Constraint.
+MySQL rejects the query with a foreign key constraint violation error (ER_NO_REFERENCED_ROW_2). This enforces the Referential Integrity Constraint.
 
 (c) Why do you store a hash and not the password?
-Hashing prevents raw credentials from being exposed if the database is leaked. Algorithms like bcrypt add unique salts and deliberate computational delays to defend against rainbow table and brute-force attacks.
+Storing plain-text passwords poses severe security risks if the database is leaked. Modern salted hashing algorithms like bcrypt prevent attackers from viewing passwords directly and protect against precomputed rainbow table and brute-force attacks.
 
 (d) The name column is NOT NULL: why did you still need your own check for an empty name?
-NOT NULL prevents NULL values, but SQL still considers empty strings ("") or whitespace valid non-null values. Application-level checks trim inputs to ensure actual text is provided.
-
-
----
-
-### Step 3: Commit and Push to GitHub
-
-In your VS Code terminal, execute[cite: 3]:
-
-```bash
-git init
-git add .
-git commit -m "Initial complete submission for DB Lab 2"
-git branch -M main
-git remote add origin <YOUR_GITHUB_REPOSITORY_URL>
-git push -u origin main
+SQL considers an empty string "" or whitespace " " as a valid non-null string value. Because NOT NULL only blocks SQL NULL values, custom application-level checks are necessary to trim inputs and verify actual text was provided.

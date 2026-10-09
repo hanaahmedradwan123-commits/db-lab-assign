@@ -3,47 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Register - To-Do Application</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 400px; margin: 40px auto; padding: 20px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; }
-        input { width: 100%; padding: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; }
-        .error { color: red; margin-bottom: 10px; }
+        :root {
+            --bg-body: #f4f6f8;
+            --bg-container: #ffffff;
+            --text-main: #333333;
+            --text-header: #1a1a1a;
+            --text-muted: #888888;
+            --border-color: #e5e7eb;
+            --border-hover: #cbd5e1;
+            --input-bg: #ffffff;
+            --btn-logout-bg: #f0f2f5;
+            --btn-logout-text: #444444;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --link-color: #2563eb;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-container: #1e293b;
+            --text-main: #f1f5f9;
+            --text-header: #ffffff;
+            --text-muted: #94a3b8;
+            --border-color: #475569;
+            --border-hover: #64748b;
+            --input-bg: #0f172a;
+            --btn-logout-bg: #334155;
+            --btn-logout-text: #e2e8f0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --link-color: #60a5fa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-container);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .header h2 {
+            font-size: 1.5rem;
+            color: var(--text-header);
+            font-weight: 700;
+        }
+
+        .btn-theme {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-theme:hover {
+            border-color: var(--border-hover);
+        }
+
+        .error {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            color: #991b1b;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 11px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .footer-text a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <h2>Register</h2>
-    <% if (errors.length > 0) { %>
-        <div class="error">
-            <% errors.forEach(error => { %>
-                <p><%= error %></p>
-            <% }) %>
+    <div class="container">
+        <div class="header">
+            <h2>Register</h2>
+            <button type="button" class="btn-theme" id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
         </div>
-    <% } %>
-    <form action="/register" method="POST" id="regForm">
-        <div class="form-group">
-            <label>Name</label>
-            <input type="text" name="name" id="name" value="<%= formData.name || '' %>">
-        </div>
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" id="email" value="<%= formData.email || '' %>">
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" name="password" id="password">
-        </div>
-        <div class="form-group">
-            <label>Confirm Password</label>
-            <input type="password" name="confirm_password" id="confirm_password">
-        </div>
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="/login">Login</a></p>
+
+        <% if (errors && errors.length > 0) { %>
+            <div class="error">
+                <% errors.forEach(error => { %>
+                    <p><%= error %></p>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <form action="/register" method="POST" id="regForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value="<%= formData.name || '' %>" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" value="<%= formData.email || '' %>" placeholder="name@example.com">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" id="confirm_password" placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+
+        <p class="footer-text">
+            Already have an account? <a href="/login">Login</a>
+        </p>
+    </div>
 
     <script>
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            themeToggleBtn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                themeToggleBtn.textContent = '🌙';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeToggleBtn.textContent = '☀️';
+            }
+        });
+
         document.getElementById('regForm').addEventListener('submit', function(e) {
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
