@@ -54,16 +54,16 @@
 ![Register Page](screenshots/register.png)
 
 ### 2. Validation Error Handling
-![Validation Error](screenshots/register-validation-error.png)
+![Validation Error](screenshots/register validation.png)
 
 ### 3. Login Page
 ![Login Page](screenshots/login.png)
 
 ### 4. Login Invalid Credentials Error
-![Login Error](screenshots/login-error.png)
+![Login Error](screenshots/login error.png)
 
 ### 5. To-Do List Dashboard
-![To-Do List View](screenshots/todos-dashboard.png)
+![To-Do List View](screenshots/todos dashboard.png)
 
 ---
 
