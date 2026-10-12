@@ -7,27 +7,31 @@ const path = require('path');
 
 const app = express();
 
+// View Engine & Static Assets
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Session Configuration (R3)
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'secret',
+    secret: process.env.SESSION_SECRET || 'super_secret_key_123',
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }
 }));
 
+// MySQL Database Connection Pool
 const pool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS || 'YOUR_MYSQL_PASSWORD_HERE',
+    password: process.env.DB_PASS || 'AsAs1234@',
     database: process.env.DB_NAME || 'registration',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
+// Authentication Guard Middleware
 function requireAuth(req, res, next) {
     if (!req.session.userId) {
         return res.redirect('/login');
@@ -41,7 +45,7 @@ app.get('/register', (req, res) => {
     res.render('register', { errors: [], formData: {} });
 });
 
-// POST /register
+// POST /register (R1, R8, R9)
 app.post('/register', async (req, res) => {
     const { name, email, password, confirm_password } = req.body;
     const errors = [];
@@ -66,7 +70,7 @@ app.post('/register', async (req, res) => {
         req.session.userId = result.insertId;
         req.session.userName = name.trim();
         res.redirect('/');
-   } catch (err) {
+    } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') {
             return res.render('register', { 
                 errors: ['Email Already Exists'], 
@@ -74,7 +78,7 @@ app.post('/register', async (req, res) => {
             });
         }
         console.error('REGISTRATION ERROR:', err);
-        res.status(500).send('Database Error: ' + err.message);
+        res.status(500).send('Database Error');
     }
 });
 
@@ -84,7 +88,7 @@ app.get('/login', (req, res) => {
     res.render('login', { errors: [], formData: {} });
 });
 
-// POST /login
+// POST /login (R2, R8, R9)
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const errors = [];
@@ -125,14 +129,14 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// POST /logout
+// POST /logout (R2)
 app.post('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/login');
     });
 });
 
-// GET /
+// GET / (R3, R9)
 app.get('/', requireAuth, async (req, res) => {
     try {
         const sql = 'SELECT todo_id, title, is_done, created_at FROM todos WHERE user_id = ? ORDER BY todo_id DESC';
@@ -148,7 +152,7 @@ app.get('/', requireAuth, async (req, res) => {
     }
 });
 
-// POST /todos/add
+// POST /todos/add (R4, R8, R9)
 app.post('/todos/add', requireAuth, async (req, res) => {
     const { title } = req.body;
     const errors = [];
@@ -174,7 +178,7 @@ app.post('/todos/add', requireAuth, async (req, res) => {
     }
 });
 
-// POST /todos/edit
+// POST /todos/edit (R5, R9)
 app.post('/todos/edit', requireAuth, async (req, res) => {
     const { todo_id, title } = req.body;
     
@@ -191,7 +195,7 @@ app.post('/todos/edit', requireAuth, async (req, res) => {
     }
 });
 
-// POST /todos/toggle
+// POST /todos/toggle (R6, R9)
 app.post('/todos/toggle', requireAuth, async (req, res) => {
     const { todo_id, is_done } = req.body;
     const newStatus = is_done === '1' ? 0 : 1;
@@ -205,7 +209,7 @@ app.post('/todos/toggle', requireAuth, async (req, res) => {
     }
 });
 
-// POST /todos/delete
+// POST /todos/delete (R7, R9)
 app.post('/todos/delete', requireAuth, async (req, res) => {
     const { todo_id } = req.body;
 
@@ -218,5 +222,6 @@ app.post('/todos/delete', requireAuth, async (req, res) => {
     }
 });
 
+// Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

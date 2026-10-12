@@ -1,13 +1,14 @@
 {
   "name": "db-lab2-app",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Database Lab 2: Login & To-Do Application",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Hana Ahmed Shehata",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
